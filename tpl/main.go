@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	server := core.CreateServer(app.NewModule, "api")
+	server := core.CreateFactory(app.NewModule, "api")
 
 	server.Listen(3000)
 }
