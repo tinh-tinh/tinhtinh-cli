@@ -54,8 +54,6 @@ var generateCmd = &cobra.Command{
 		wd, err := os.Getwd()
 		cobra.CheckErr(err)
 
-		fmt.Print(args)
-
 		moduleName := validateCmdName(args[1])
 		module := &Module{
 			ModName:      moduleName,
@@ -98,7 +96,7 @@ func generateService(module *Module) error {
 	defer serviceFile.Close()
 
 	serviceTemplate := template.Must(template.New("service").Parse(string(tpl.ServiceTemplate())))
-	err = serviceTemplate.Execute(serviceFile, nil)
+	err = serviceTemplate.Execute(serviceFile, module)
 	if err != nil {
 		return err
 	}
@@ -113,7 +111,7 @@ func generateController(module *Module) error {
 	defer controllerFile.Close()
 
 	controllerTemplate := template.Must(template.New("controller").Parse(string(tpl.ControllerTemplate())))
-	err = controllerTemplate.Execute(controllerFile, nil)
+	err = controllerTemplate.Execute(controllerFile, module)
 	if err != nil {
 		return err
 	}
@@ -138,7 +136,7 @@ func generateModule(module *Module) error {
 	defer moduleFile.Close()
 
 	moduleTemplate := template.Must(template.New("module").Parse(string(tpl.ModuleTemplate())))
-	err = moduleTemplate.Execute(moduleFile, nil)
+	err = moduleTemplate.Execute(moduleFile, module)
 	if err != nil {
 		return err
 	}
