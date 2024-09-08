@@ -54,6 +54,8 @@ var generateCmd = &cobra.Command{
 		wd, err := os.Getwd()
 		cobra.CheckErr(err)
 
+		fmt.Print(args)
+
 		moduleName := validateCmdName(args[1])
 		module := &Module{
 			ModName:      moduleName,
