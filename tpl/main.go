@@ -47,7 +47,7 @@ func NewModule(module *core.DynamicModule) *core.DynamicModule {
 		Providers:   []core.Provider{NewService},
 	})
 
-	return {{ .ModName }}
+	return {{ .ModName }}Module
 }
 	`)
 }
@@ -110,7 +110,7 @@ func (s *{{ .ModName }}Service) Delete(input interface{}) interface{} {
 	return nil
 }
 
-func NewService(module *core.DynamicModule) *core.Service {
+func NewService(module *core.DynamicModule) *core.DynamicProvider {
 	svc := module.NewProvider(&{{ .ModName }}Service{})
 
 	return svc
