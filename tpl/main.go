@@ -98,15 +98,19 @@ func (s *{{ .ModName }}Service) Create(input interface{}) interface{} {
 	return nil
 }
 
-func (s *{{ .ModName }}Service) Get(input interface{}) interface{} {
+func (s *{{ .ModName }}Service) Find() interface{} {
 	return nil
 }
 
-func (s *{{ .ModName }}Service) Update(input interface{}) interface{} {
+func (s *{{ .ModName }}Service) FindById(id string) interface{} {
 	return nil
 }
 
-func (s *{{ .ModName }}Service) Delete(input interface{}) interface{} {
+func (s *{{ .ModName }}Service) Update(id string,input interface{}) interface{} {
+	return nil
+}
+
+func (s *{{ .ModName }}Service) Delete(id string) interface{} {
 	return nil
 }
 

@@ -19,12 +19,11 @@ type Command struct {
 }
 
 func (p *Project) Create() error {
-	// check if AbsolutePath exists
-	if _, err := os.Stat("app"); os.IsNotExist(err) {
-		// create directory
-		if err := os.Mkdir("app", 0754); err != nil {
-			return err
-		}
+	err := generateModule(&Module{
+		ModName: "app",
+	})
+	if err != nil {
+		return err
 	}
 
 	appFile, err := os.Create("app/app_module.go")
