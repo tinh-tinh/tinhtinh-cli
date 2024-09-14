@@ -29,7 +29,24 @@ func (p *Project) Create() error {
 		}
 	}
 
-	err := generateModule(module)
+	err := generateService(module)
+	if err != nil {
+		return err
+	}
+
+	err = generateController(module)
+	if err != nil {
+		return err
+	}
+
+	appFile, err := os.Create("app/app_module.go")
+	if err != nil {
+		return err
+	}
+	defer appFile.Close()
+
+	appTemplate := template.Must(template.New("app").Parse(string(tpl.AppTemplate())))
+	err = appTemplate.Execute(appFile, nil)
 	if err != nil {
 		return err
 	}
