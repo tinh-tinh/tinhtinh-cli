@@ -28,6 +28,8 @@ import (
 func NewModule() *core.DynamicModule {
 	appModule := core.NewModule(core.NewModuleOptions{
 		Global: true,
+		Controllers: []core.Controller{NewController},
+		Providers:   []core.Provider{NewService},
 	})
 
 	return appModule
