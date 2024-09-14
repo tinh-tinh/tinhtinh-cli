@@ -19,21 +19,17 @@ type Command struct {
 }
 
 func (p *Project) Create() error {
-	err := generateModule(&Module{
+	module := &Module{
 		ModName: "app",
-	})
-	if err != nil {
-		return err
+	}
+	if _, err := os.Stat(module.ModName); os.IsNotExist(err) {
+		// create directory
+		if err := os.Mkdir(module.ModName, 0754); err != nil {
+			return err
+		}
 	}
 
-	appFile, err := os.Create("app/app_module.go")
-	if err != nil {
-		return err
-	}
-	defer appFile.Close()
-
-	appTemplate := template.Must(template.New("app").Parse(string(tpl.AppTemplate())))
-	err = appTemplate.Execute(appFile, nil)
+	err := generateModule(module)
 	if err != nil {
 		return err
 	}
