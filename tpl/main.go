@@ -27,7 +27,6 @@ import (
 
 func NewModule() *core.DynamicModule {
 	appModule := core.NewModule(core.NewModuleOptions{
-		Global: true,
 		Controllers: []core.Controller{NewController},
 		Providers:   []core.Provider{NewService},
 	})
@@ -94,6 +93,8 @@ package {{ .ModName }}
 
 import "github.com/tinh-tinh/tinhtinh/core"
 
+const {{ .UpperModName }}_SERVICE core.Provide = "{{ .UpperModName}}_SERVICE"
+
 type {{ .ModName }}Service struct {}
 
 func (s *{{ .ModName }}Service) Create(input interface{}) interface{} {
@@ -117,7 +118,10 @@ func (s *{{ .ModName }}Service) Delete(id string) interface{} {
 }
 
 func NewService(module *core.DynamicModule) *core.DynamicProvider {
-	svc := module.NewProvider(&{{ .ModName }}Service{})
+	svc := module.NewProvider(core.ProviderOptions{
+		Name: {{ .UpperModName }}_SERVICE,
+		Value: &{{ .ModName }}Service{},
+	})
 
 	return svc
 }
