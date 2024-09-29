@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"slices"
+	"strings"
 	"text/template"
 	"unicode"
 
@@ -15,6 +16,7 @@ import (
 )
 
 type Module struct {
+	UpperModName string
 	PkgName      string
 	ModName      string
 	AbsolutePath string
@@ -57,6 +59,7 @@ var generateCmd = &cobra.Command{
 		moduleName := validateCmdName(args[1])
 		module := &Module{
 			ModName:      moduleName,
+			UpperModName: strings.ToUpper(moduleName),
 			AbsolutePath: wd,
 		}
 
