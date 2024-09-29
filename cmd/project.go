@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"os"
+	"strings"
 	"text/template"
 
 	"github.com/tinh-tinh/tinhtinh-cli/tpl"
@@ -20,7 +21,8 @@ type Command struct {
 
 func (p *Project) Create() error {
 	module := &Module{
-		ModName: "app",
+		ModName:      "app",
+		UpperModName: strings.ToUpper("app"),
 	}
 	if _, err := os.Stat(module.ModName); os.IsNotExist(err) {
 		// create directory
