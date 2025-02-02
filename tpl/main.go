@@ -5,7 +5,7 @@ func MainTemplate() []byte {
 package main
 
 import (
-	"github.com/tinh-tinh/tinhtinh/core"
+	"github.com/tinh-tinh/tinhtinh/v2/core"
 	"{{ .PkgName}}/app"
 )
 
@@ -22,13 +22,13 @@ func AppTemplate() []byte {
 package app
 
 import (
-	"github.com/tinh-tinh/tinhtinh/core"
+	"github.com/tinh-tinh/tinhtinh/v2/core"
 )
 
-func NewModule() *core.DynamicModule {
+func NewModule() core.Module {
 	appModule := core.NewModule(core.NewModuleOptions{
-		Controllers: []core.Controller{NewController},
-		Providers:   []core.Provider{NewService},
+		Controllers: []core.Controllers{NewController},
+		Providers:   []core.Providers{NewService},
 	})
 
 	return appModule
@@ -40,12 +40,12 @@ func ModuleTemplate() []byte {
 	return []byte(`
 package {{ .ModName }}
 
-import "github.com/tinh-tinh/tinhtinh/core"
+import "github.com/tinh-tinh/tinhtinh/v2/core"
 
-func NewModule(module *core.DynamicModule) *core.DynamicModule {
+func NewModule(module core.Module) core.Module {
 	{{ .ModName }}Module := module.New(core.NewModuleOptions{
-		Controllers: []core.Controller{NewController},
-		Providers:   []core.Provider{NewService},
+		Controllers: []core.Controllers{NewController},
+		Providers:   []core.Providers{NewService},
 	})
 
 	return {{ .ModName }}Module
@@ -57,12 +57,12 @@ func ControllerTemplate() []byte {
 	return []byte(`
 package {{ .ModName }}
 
-import "github.com/tinh-tinh/tinhtinh/core"
+import "github.com/tinh-tinh/tinhtinh/v2/core"
 
-func NewController(module *core.DynamicModule) *core.DynamicController {
+func NewController(module core.Module) core.Controller {
 	ctrl := module.NewController("{{ .ModName }}")
 
-		ctrl.Post("", func(ctx core.Ctx) error {
+	ctrl.Post("", func(ctx core.Ctx) error {
 		return ctx.JSON(core.Map{"data": "ok"})
 	})
 
@@ -91,7 +91,7 @@ func ServiceTemplate() []byte {
 	return []byte(`
 package {{ .ModName }}
 
-import "github.com/tinh-tinh/tinhtinh/core"
+import "github.com/tinh-tinh/tinhtinh/v2/core"
 
 const {{ .UpperModName }}_SERVICE core.Provide = "{{ .UpperModName}}_SERVICE"
 
@@ -117,7 +117,7 @@ func (s *{{ .ModName }}Service) Delete(id string) interface{} {
 	return nil
 }
 
-func NewService(module *core.DynamicModule) *core.DynamicProvider {
+func NewService(module core.Module) core.Provider {
 	svc := module.NewProvider(core.ProviderOptions{
 		Name: {{ .UpperModName }}_SERVICE,
 		Value: &{{ .ModName }}Service{},
