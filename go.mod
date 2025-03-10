@@ -1,4 +1,4 @@
-module github.com/tinh-tinh/tinhtinh-cli/v2
+module github.com/tinh-tinh/tinhtinh-cli
 
 go 1.22.0
 

@@ -12,7 +12,7 @@ import (
 	"unicode"
 
 	"github.com/spf13/cobra"
-	"github.com/tinh-tinh/tinhtinh-cli/v2/tpl"
+	"github.com/tinh-tinh/tinhtinh-cli/tpl"
 )
 
 type Module struct {
