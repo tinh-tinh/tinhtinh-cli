@@ -5,7 +5,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/tinh-tinh/tinhtinh-cli/tpl"
+	"github.com/tinh-tinh/tinhtinh-cli/v2/tpl"
 )
 
 type Project struct {
