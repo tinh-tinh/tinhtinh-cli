@@ -21,9 +21,7 @@ func AppTemplate() []byte {
 	return []byte(`
 package app
 
-import (
-	"github.com/tinh-tinh/tinhtinh/v2/core"
-)
+import "github.com/tinh-tinh/tinhtinh/v2/core"
 
 func NewModule() core.Module {
 	appModule := core.NewModule(core.NewModuleOptions{

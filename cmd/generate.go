@@ -67,7 +67,7 @@ var generateCmd = &cobra.Command{
 		if err != nil {
 			fmt.Println(err)
 		}
-		fmt.Println("Generated successfully 🚀")
+		fmt.Println("Generated successfully!")
 	},
 }
 
