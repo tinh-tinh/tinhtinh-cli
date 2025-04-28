@@ -31,7 +31,7 @@ var initCmd = &cobra.Command{
 		if err != nil {
 			fmt.Println(err)
 		}
-		fmt.Println("init called")
+		fmt.Println("🚀 TinhTinh initialized successfully!")
 	},
 }
 
