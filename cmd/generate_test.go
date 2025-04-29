@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_Generate(t *testing.T) {
+func Test_Generate_Module(t *testing.T) {
 	buf := new(bytes.Buffer)
 
 	// Set command output to buffer
@@ -36,5 +36,24 @@ func Test_Generate(t *testing.T) {
 	assert.Nil(t, err)
 
 	os.RemoveAll(tmpDir)
-	os.Remove("main.go")
+}
+
+func Test_Generate_Service(t *testing.T) {
+	buf := new(bytes.Buffer)
+
+	// Set command output to buffer
+	rootCmd.SetOut(buf)
+	rootCmd.SetErr(buf)
+	rootCmd.SetArgs([]string{"generate", "service", "users", "--path=."})
+	rootCmd.Flags().String("path", "/app", "")
+
+	// Execute the root command
+	err := rootCmd.Execute()
+	assert.Nil(t, err)
+
+	generatedFile := filepath.Join(".", "users_service.go")
+	_, err = os.Stat(generatedFile)
+	assert.Nil(t, err)
+
+	os.Remove(generatedFile)
 }

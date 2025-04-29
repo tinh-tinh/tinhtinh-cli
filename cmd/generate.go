@@ -53,17 +53,16 @@ var generateCmd = &cobra.Command{
 			cobra.CheckErr(fmt.Errorf("add needs a name for the command"))
 		}
 
-		wd, err := os.Getwd()
-		cobra.CheckErr(err)
-
+		path, _ := cmd.Flags().GetString("path")
+		fmt.Println(path)
 		moduleName := validateCmdName(args[1])
 		module := &Module{
 			ModName:      moduleName,
 			UpperModName: strings.ToUpper(moduleName),
-			AbsolutePath: wd,
+			AbsolutePath: path,
 		}
 
-		err = generateProject(module, args[0])
+		err := generateProject(module, args[0])
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -72,9 +71,15 @@ var generateCmd = &cobra.Command{
 }
 
 func generateProject(module *Module, typeCmd string) error {
-	if _, err := os.Stat(module.ModName); os.IsNotExist(err) {
+	var path string
+	if module.AbsolutePath == "" {
+		path = module.ModName
+	} else {
+		path = module.AbsolutePath
+	}
+	if _, err := os.Stat(path); os.IsNotExist(err) {
 		// create directory
-		if err := os.Mkdir(module.ModName, 0754); err != nil {
+		if err := os.Mkdir(path, 0754); err != nil {
 			return err
 		}
 	}
@@ -92,7 +97,13 @@ func generateProject(module *Module, typeCmd string) error {
 }
 
 func generateService(module *Module) error {
-	serviceFile, err := os.Create(fmt.Sprintf("%s/%s_service.go", module.ModName, module.ModName))
+	var path string
+	if module.AbsolutePath == "" {
+		path = module.ModName
+	} else {
+		path = module.AbsolutePath
+	}
+	serviceFile, err := os.Create(fmt.Sprintf("%s/%s_service.go", path, module.ModName))
 	if err != nil {
 		return err
 	}
@@ -107,7 +118,13 @@ func generateService(module *Module) error {
 }
 
 func generateController(module *Module) error {
-	controllerFile, err := os.Create(fmt.Sprintf("%s/%s_controller.go", module.ModName, module.ModName))
+	var path string
+	if module.AbsolutePath == "" {
+		path = module.ModName
+	} else {
+		path = module.AbsolutePath
+	}
+	controllerFile, err := os.Create(fmt.Sprintf("%s/%s_controller.go", path, module.ModName))
 	if err != nil {
 		return err
 	}
@@ -132,7 +149,13 @@ func generateModule(module *Module) error {
 		return err
 	}
 
-	moduleFile, err := os.Create(fmt.Sprintf("%s/%s_module.go", module.ModName, module.ModName))
+	var path string
+	if module.AbsolutePath == "" {
+		path = module.ModName
+	} else {
+		path = module.AbsolutePath
+	}
+	moduleFile, err := os.Create(fmt.Sprintf("%s/%s_module.go", path, module.ModName))
 	if err != nil {
 		return err
 	}
@@ -196,6 +219,7 @@ func validateCmdName(source string) string {
 }
 
 func init() {
+	generateCmd.Flags().StringP("path", "p", "", "")
 	rootCmd.AddCommand(generateCmd)
 
 	// Here you will define your flags and configuration settings.
