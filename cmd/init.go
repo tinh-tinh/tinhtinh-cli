@@ -6,6 +6,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"os/exec"
 	"path"
 	"path/filepath"
@@ -16,22 +17,102 @@ import (
 
 // initCmd represents the init command
 var initCmd = &cobra.Command{
-	Use: "init",
+	Use:   "init [package] [git_url]",
+	Short: "Initialize a new project, Go module, and clone commands (optional)",
+	Long: `Initializes a new project structure, creates a folder with the package name,
+runs 'go mod init' with the specified package path, optionally clones a
+repository into the created folder, and then executes 'go mod tidy'.
+If no package path is provided, it attempts to infer it from the project
+directory. If a Git URL is provided, it will be cloned into the package folder.`,
+	Args: cobra.MaximumNArgs(2),
 	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		var comps []string
-		var directive cobra.ShellCompDirective
-		if len(args) > 0 {
-			comps = cobra.AppendActiveHelp(comps, "ERROR: Too many arguments specified")
-			directive = cobra.ShellCompDirectiveNoFileComp
+		if len(args) >= 2 {
+			return nil, cobra.ShellCompDirectiveNoFileComp
 		}
-		return comps, directive
+		return nil, cobra.ShellCompDirectiveDefault
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		_, err := initializeProject()
-		if err != nil {
-			fmt.Println(err)
+		var packageName string
+		var gitURL string
+
+		if len(args) > 0 {
+			packageName = args[0]
+		} else {
+			wd, err := os.Getwd()
+			if err != nil {
+				fmt.Println("Error getting current working directory:", err)
+				return
+			}
+			packageName = filepath.Base(wd)
+			fmt.Printf("Using directory name '%s' as module path. You can specify a different path as an argument.\n", packageName)
 		}
-		fmt.Println("🚀 TinhTinh initialized successfully!")
+
+		if len(args) > 1 {
+			gitURL = args[1]
+		}
+
+		projectDir := packageName // Use the package name as the project directory
+
+		fmt.Printf("Creating project directory: %s\n", projectDir)
+		err := os.MkdirAll(projectDir, 0755) // Create the directory with read/write/execute permissions for the owner and read/execute for others
+		if err != nil {
+			fmt.Printf("Error creating project directory '%s': %v\n", projectDir, err)
+			return
+		}
+
+		// Change the current working directory to the newly created project directory
+		err = os.Chdir(projectDir)
+		if err != nil {
+			fmt.Printf("Error changing directory to '%s': %v\n", projectDir, err)
+			return
+		}
+		defer os.Chdir("..") // Change back to the original directory when the function exits
+
+		fmt.Println("Initializing project...")
+		_, err = initializeProject() // Assuming this function now works within the project directory
+		if err != nil {
+			fmt.Println("Error during project initialization:", err)
+			return
+		}
+
+		fmt.Printf("Initializing Go module with path: %s\n", packageName)
+		cmdGoModInit := exec.Command("go", "mod", "init", packageName)
+		cmdGoModInit.Stdout = os.Stdout
+		cmdGoModInit.Stderr = os.Stderr
+		err = cmdGoModInit.Run()
+		if err != nil {
+			fmt.Println("Error running 'go mod init':", err)
+			fmt.Println("Make sure Go is installed and in your PATH.")
+			return
+		}
+		fmt.Println("Go module initialized.")
+
+		if gitURL != "" {
+			fmt.Printf("Cloning repository '%s' into '%s'...\n", gitURL, projectDir)
+			cmdGitClone := exec.Command("git", "clone", gitURL, ".") // Clone into the current directory
+			cmdGitClone.Stdout = os.Stdout
+			cmdGitClone.Stderr = os.Stderr
+			err = cmdGitClone.Run()
+			if err != nil {
+				fmt.Printf("Error cloning repository '%s': %v\n", gitURL, err)
+				fmt.Println("Make sure Git is installed and in your PATH, and the URL is correct.")
+				return
+			}
+			fmt.Println("Repository cloned successfully.")
+		}
+
+		fmt.Println("Tidying Go module dependencies...")
+		cmdGoModTidy := exec.Command("go", "mod", "tidy")
+		cmdGoModTidy.Stdout = os.Stdout
+		cmdGoModTidy.Stderr = os.Stderr
+		err = cmdGoModTidy.Run()
+		if err != nil {
+			fmt.Println("Error running 'go mod tidy':", err)
+			return
+		}
+		fmt.Println("Go module dependencies tidied.")
+
+		fmt.Printf("🚀 TinhTinh initialized successfully in '%s' with Go modules and dependencies tidied!", projectDir)
 	},
 }
 
