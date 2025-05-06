@@ -36,7 +36,7 @@ var generateCmd = &cobra.Command{
 			directive = cobra.ShellCompDirectiveNoFileComp
 		} else if len(args) == 2 {
 			cmdType := args[0]
-			standard := []string{"controller", "service", "module"}
+			standard := []string{"controller", "service", "module", "guard", "middleware"}
 			idx := slices.IndexFunc(standard, func(s string) bool { return cmdType == s })
 			if idx == -1 {
 				comps = cobra.AppendActiveHelp(comps, "ERROR: invalid command type")
@@ -91,8 +91,54 @@ func generateProject(module *Module, typeCmd string) error {
 		return generateController(module)
 	case "module":
 		return generateModule(module)
+	case "guard":
+		return generateGuard(module)
+	case "middlewere":
+		return generateMiddleware(module)
 	}
 
+	return nil
+}
+
+func generateMiddleware(module *Module) error {
+	var path string
+	if module.AbsolutePath == "" {
+		path = module.ModName
+	} else {
+		path = module.AbsolutePath
+	}
+	middlewareFile, err := os.Create(fmt.Sprintf("%s/%s_middleware.go", path, module.ModName))
+	if err != nil {
+		return err
+	}
+	defer middlewareFile.Close()
+
+	middlewareTemplate := template.Must(template.New("middleware").Parse(string(tpl.MiddlewareTemplate())))
+	err = middlewareTemplate.Execute(middlewareFile, module)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func generateGuard(module *Module) error {
+	var path string
+	if module.AbsolutePath == "" {
+		path = module.ModName
+	} else {
+		path = module.AbsolutePath
+	}
+	guardFile, err := os.Create(fmt.Sprintf("%s/%s_guard.go", path, module.ModName))
+	if err != nil {
+		return err
+	}
+	defer guardFile.Close()
+
+	guardTemplate := template.Must(template.New("guard").Parse(string(tpl.GuardTemplate())))
+	err = guardTemplate.Execute(guardFile, module)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
