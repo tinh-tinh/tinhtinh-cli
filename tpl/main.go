@@ -125,3 +125,29 @@ func NewService(module core.Module) core.Provider {
 }
 	`)
 }
+
+func MiddlewareTemplate() []byte {
+	return []byte(`
+package {{ .ModName }}
+
+import "github.com/tinh-tinh/tinhtinh/v2/core"
+
+func Middleware(ctx core.Ctx) error {
+	// Something
+	return ctx.Next()
+}
+	`)
+}
+
+func GuardTemplate() []byte {
+	return []byte(`
+package {{ .ModName }}
+
+import "github.com/tinh-tinh/tinhtinh/v2/core"
+
+func New_Guard(ref core.RefProvider, ctx core.Ctx) bool {
+	// Something
+	return true
+}
+	`)
+}
