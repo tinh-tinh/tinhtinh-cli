@@ -10,11 +10,11 @@
 ## Install
 
 ```bash
-go get -u github.com/tinh-tinh/tinhtinh
+go get -u github.com/tinh-tinh/tinhtinh/v2
 ```
 
 ## Usage
 
 ```
-go install github.com/tinh-tinh/tinhtinh-cli@latest
+go install github.com/tinh-tinh/tinhtinh-cli/v2@latest
 ```
