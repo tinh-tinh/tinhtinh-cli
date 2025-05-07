@@ -65,13 +65,6 @@ directory. If a Git URL is provided, it will be cloned into the package folder.`
 		}
 		defer os.Chdir("..") // Change back to the original directory when the function exits
 
-		fmt.Println("Initializing project...")
-		_, err = initializeProject() // Assuming this function now works within the project directory
-		if err != nil {
-			fmt.Println("Error during project initialization:", err)
-			return
-		}
-
 		fmt.Printf("Initializing Go module with path: %s\n", packageName)
 		cmdGoModInit := exec.Command("go", "mod", "init", packageName)
 		cmdGoModInit.Stdout = os.Stdout
@@ -96,6 +89,13 @@ directory. If a Git URL is provided, it will be cloned into the package folder.`
 				return
 			}
 			fmt.Println("Repository cloned successfully.")
+		}
+
+		fmt.Println("Initializing project...")
+		_, err = initializeProject() // Assuming this function now works within the project directory
+		if err != nil {
+			fmt.Println("Error during project initialization:", err)
+			return
 		}
 
 		fmt.Println("Tidying Go module dependencies...")
