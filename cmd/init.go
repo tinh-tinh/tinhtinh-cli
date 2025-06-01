@@ -109,7 +109,7 @@ directory. If a Git URL is provided, it will be cloned into the package folder.`
 		}
 		fmt.Println("Go module dependencies tidied.")
 
-		fmt.Printf("🚀 TinhTinh initialized successfully in '%s' with Go modules and dependencies tidied!", projectDir)
+		fmt.Printf("🚀 TinhTinh initialized successfully in '%s' with Go modules and dependencies tidied!\n", projectDir)
 	},
 }
 
