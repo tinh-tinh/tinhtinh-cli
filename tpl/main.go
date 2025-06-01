@@ -91,8 +91,6 @@ package {{ .ModName }}
 
 import "github.com/tinh-tinh/tinhtinh/v2/core"
 
-const {{ .UpperModName }}_SERVICE core.Provide = "{{ .UpperModName}}_SERVICE"
-
 type {{ .ModName }}Service struct {}
 
 func (s *{{ .ModName }}Service) Create(input interface{}) interface{} {
@@ -116,10 +114,7 @@ func (s *{{ .ModName }}Service) Delete(id string) interface{} {
 }
 
 func NewService(module core.Module) core.Provider {
-	svc := module.NewProvider(core.ProviderOptions{
-		Name: {{ .UpperModName }}_SERVICE,
-		Value: &{{ .ModName }}Service{},
-	})
+	svc := module.NewProvider(&{{ .ModName }}Service{})
 
 	return svc
 }
